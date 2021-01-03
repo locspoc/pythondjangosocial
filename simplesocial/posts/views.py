@@ -1,6 +1,6 @@
 from django.shortcuts import render
 from django.contrib import messages
-from django.contrib.auth.mixins import LoginRequired Mixin
+from django.contrib.auth.mixins import LoginRequiredMixin
 from django.urls import reverse_lazy
 from django.http import Http404
 from django.views import generic
@@ -16,7 +16,7 @@ User = get_user_model()
 
 class PostList(SelectRelatedMixin, generic.ListView):
   model = models.Post
-  select_related + ("user", "group")
+  select_related = ("user", "group")
 
 class UserPosts(generic.ListView):
   model = models.Post
@@ -24,8 +24,7 @@ class UserPosts(generic.ListView):
 
   def get_querset(self):
     try:
-      self.post_user = User.objects.prefetch_related("posts")
-      .get(
+      self.post_user = User.objects.prefetch_related("posts").get(
         username__iexact=self.kwargs.get("username")
       )
     except User.DoesNotExit:
